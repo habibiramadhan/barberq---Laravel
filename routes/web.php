@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HairModelController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -34,5 +35,6 @@ Route::middleware('auth')->group(function () {
 Route::resource('orders', OrderController::class);
 Route::resource('products',ProductController::class);
 Route::resource('HairModels',HairModelController::class);
+Route::resource('booking',BookingController::class);
 
 require __DIR__.'/auth.php';
