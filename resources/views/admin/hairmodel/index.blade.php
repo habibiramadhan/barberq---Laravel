@@ -68,7 +68,7 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($hair as $d)
+            @forelse ($hairmodel as $d)
             <tr>
                 <td>{{ ++$i }}</td>
                 <td>{{ $d->title }}</td>

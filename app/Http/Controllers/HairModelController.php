@@ -15,12 +15,14 @@ class HairModelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(HairModelDataTable $dataTable)
+    public function index()
     { 
         
 
-        $hair =HairModel::all();
-        return view('admin.hair.index' ,compact('hair'))->with('i');
+        $hairmodel = HairModel::latest()->paginate(5);
+    
+        return view('admin.hairmodel.index',compact('hairmodel'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);;
     }
 
     /**
@@ -47,20 +49,6 @@ class HairModelController extends Controller
             'content'   => 'required'
         ]);
 
-        // try {
-            // $image = $request->file('image');
-            // $image->storeAs('public/image', $image->hashName());
-            
-
-            // $hairModel = HairModel::create([
-            //     'image'     => $image->hashName(),
-            //     'title'     => $request->title,
-            //     'content'   => $request->content
-            // ]);
-
-           
-
-
             $input = $request->all();
   
             if ($image = $request->file('image')) {
@@ -74,10 +62,6 @@ class HairModelController extends Controller
 
             HairModel::Create($input);
             return redirect()->route('HairModels.index')->with(['success' => 'Data Berhasil Disimpan!']);
-        // } catch (Exception $e) {
-        //     dd($e);
-        //     return redirect()->route('admin.hair.index')->with(['error' => 'Data Gagal Disimpan!']);
-        // }
     }
 
     /**
@@ -86,9 +70,9 @@ class HairModelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show()
     {
-        //
+       
     }
 
     /**
@@ -97,9 +81,11 @@ class HairModelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(HairModel $hairmodel,$id)
     {
-        //
+
+        
+        return view('admin.hairmodel.edit',['hairmodel' => $hairmodel]);
     }
 
     /**
@@ -109,9 +95,30 @@ class HairModelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,HairModel $hairmodel)
     {
-        //
+
+        $this->validate($request, [
+            'image'     => 'required|image|mimes:png,jpg,jpeg',
+            'title'     => 'required',
+            'content'   => 'required'
+        ]);
+
+        $input = $request->all();
+  
+        if ($image = $request->file('image')) {
+            $destinationPath = 'image/';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+            $input['image'] = "$profileImage";
+        }else{
+            unset($input['image']);
+        }
+          
+        $hairmodel->update($input);
+    
+        return redirect()->route('hairmodels.index')
+                        ->with('success','Product updated successfully');
     }
 
     /**
@@ -123,7 +130,6 @@ class HairModelController extends Controller
     public function destroy($id)
     {
         $hairModel = HairModel::findOrFail($id);
-        Storage::disk('local')->delete('public/image/'.$hairModel->image);
         $hairModel->delete();
      
         return redirect()->route('HairModels.index');
