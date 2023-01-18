@@ -6,6 +6,7 @@ use App\DataTables\HairModelDataTable;
 use App\Models\HairModel;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class HairModelController extends Controller
 {
@@ -15,7 +16,8 @@ class HairModelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(HairModelDataTable $dataTable)
-    {
+    { 
+        
 
         $hair =HairModel::all();
         return view('admin.hair.index' ,compact('hair'))->with('i');
@@ -120,6 +122,10 @@ class HairModelController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $hairModel = HairModel::findOrFail($id);
+        Storage::disk('local')->delete('public/image/'.$hairModel->image);
+        $hairModel->delete();
+     
+        return redirect()->route('HairModels.index');
     }
 }

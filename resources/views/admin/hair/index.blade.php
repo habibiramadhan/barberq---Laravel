@@ -80,13 +80,17 @@
                             <i class="ri-more-fill align-middle"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" style="">
-                            <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                            <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
+                            <form action="{{route('HairModels.destroy', $d->id)}}" method="POST">
+                                @csrf
+                            <li><a class="dropdown-item edit-item-btn" href="{{ route('HairModels.edit', $d->id) }}"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
                             <li>
-                                <a class="dropdown-item remove-item-btn">
+                                @method('delete')
+                                <button type="submit" class="dropdown-item remove-item-btn" onclick="return confirm('Are you sure?')">
                                     <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                </a>
+                                </button>
+                              
                             </li>
+                            </form>
                         </ul>
                     </div>
                 </td>
